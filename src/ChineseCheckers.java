@@ -50,6 +50,7 @@ public class ChineseCheckers extends JPanel implements MouseListener {
     // ------------------------------ DRAW HOME PAGE ------------------------------
 
     public static void drawHomePage(Graphics g) {
+        
         g.setColor(new Color(195, 170, 137)); //page color
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -68,17 +69,8 @@ public class ChineseCheckers extends JPanel implements MouseListener {
         g.setFont(new Font("Serif", Font.BOLD, 60));
         g.drawString("PLAY", WIDTH/2 - 80, 520);
 
-        /*
-        // background
-        g.setColor(new Color(195, 170, 137));
-        g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // title
-        g.setColor(new Color(79, 67, 53));
-        g.setFont(new Font("Serif", Font.BOLD, 120));
-        g.drawString("Chinese", 250, 250);
-        g.drawString("Checkers", 210, 380);
-
+        /* 
         // play button — dark brown border
         g.setColor(new Color(79, 67, 53));
         g.fillRoundRect(PLAY_BTN_X, PLAY_BTN_Y, PLAY_BTN_W, PLAY_BTN_H, 20, 20);
