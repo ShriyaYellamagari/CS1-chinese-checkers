@@ -1,157 +1,224 @@
-//CS1 Winter Wonderland Project
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 
-import org.w3c.dom.events.MouseEvent;
-
 public class ChineseCheckers extends JPanel implements MouseListener {
 
-    //frame sizes
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 800;
 
-    //home page play button 
-    private static int PLAY_BUTTON_X = 400;
-    private static int PLAY_BUTTON_Y = 450;
-    private static int PLAY_BUTTON_W = 200;
-    private static int PLAY_BUTTON_H = 70;
-
+    // "home" or "game"
     private String currentPage = "home";
 
-    private BufferedImage image;
-    private Graphics g;
+    // play button bounds
+    private static final int PLAY_BTN_X = 380;
+    private static final int PLAY_BTN_Y = 450;
+    private static final int PLAY_BTN_W = 220;
+    private static final int PLAY_BTN_H = 70;
+
+    // game objects
+    private Board board;
     private ArrayList<Marble> marbles;
-    private JPanel mousepanel;
+
+    // game state
+    private int currentPlayer = 1;       // whose turn: 1 or 2
+    private int player1Score = 0;        // marbles reached goal
+    private int player2Score = 0;
+    private Marble selectedMarble = null; // marble the player clicked on
+
+    // player colors
+    private static final Color P1_COLOR = new Color(180, 50, 50);  // red
+    private static final Color P2_COLOR = new Color(50, 100, 180); // blue
 
     public ChineseCheckers() {
-        image =  new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        g = image.getGraphics();
-        
         marbles = new ArrayList<>();
-
         setFocusable(true);
         addMouseListener(this);
     }
 
-    // ------------------------------ PAINTS ONTO PANEL - CHOOSES WHICH SCREEN TO DRAW ------------------------------
+    // called once when PLAY is clicked — sets up board and marbles
+    private void initGame() {
+        board = new Board(650, 60);
+        marbles.clear();
+        placeStartingMarbles();
+        currentPlayer = 1;
+        player1Score = 0;
+        player2Score = 0;
+        selectedMarble = null;
+    }
 
-    public void paintComponent (Graphics g) {
+    // places 10 marbles for each player in their starting triangles
+    private void placeStartingMarbles() {
+        // Player 1 starts in TOP triangle (rows 0-3)
+        for (int row = 0; row <= 3; row++) {
+            for (int col = 0; col < Board.HOLES_PER_ROW[row]; col++) {
+                int x = board.getHoleX(row, col);
+                int y = board.getHoleY(row, col);
+                marbles.add(new Marble(row, col, x, y, 18, P1_COLOR));
+            }
+        }
 
+        // Player 2 starts in BOTTOM triangle (rows 13-16)
+        for (int row = 13; row <= 16; row++) {
+            for (int col = 0; col < Board.HOLES_PER_ROW[row]; col++) {
+                int x = board.getHoleX(row, col);
+                int y = board.getHoleY(row, col);
+                marbles.add(new Marble(row, col, x, y, 18, P2_COLOR));
+            }
+        }
+    }
+
+    // -----------------------------------------------------------
+    // PAINT
+    // -----------------------------------------------------------
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         if (currentPage.equals("home")) {
             drawHomePage(g);
         } else if (currentPage.equals("game")) {
             drawGamePage(g);
         }
-
     }
-    
-    // ------------------------------ DRAW HOME PAGE ------------------------------
 
-    public static void drawHomePage(Graphics g) {
-        
-        g.setColor(new Color(195, 170, 137)); //page color
+    // -----------------------------------------------------------
+    // HOME PAGE
+    // -----------------------------------------------------------
+    private void drawHomePage(Graphics g) {
+        g.setColor(new Color(195, 170, 137));
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Title
-        g.setColor(new Color(79, 67, 53));//dark brown
+        g.setColor(new Color(79, 67, 53));
         g.setFont(new Font("Serif", Font.BOLD, 120));
-        g.drawString("Chinese", 300, 300);
-        g.drawString("Checkers", 260, 400);
+        g.drawString("Chinese", 220, 250);
+        g.drawString("Checkers", 180, 390);
 
-        // Play button
-        g.fillRect(PLAY_BUTTON_X, PLAY_BUTTON_Y, 200,100);
-        g.setColor(new Color(195, 170, 137)); // page color
-        g.fillRect(500 - 90, PLAY_BUTTON_Y + 10, 180, 80);
-
-        g.setColor(new Color(79, 67, 53));//dark brown
-        g.setFont(new Font("Serif", Font.BOLD, 60));
-        g.drawString("PLAY", WIDTH/2 - 80, 520);
-
-
-        /* 
-        // play button — dark brown border
+        // play button
         g.setColor(new Color(79, 67, 53));
         g.fillRoundRect(PLAY_BTN_X, PLAY_BTN_Y, PLAY_BTN_W, PLAY_BTN_H, 20, 20);
-        // inner fill (lighter so it looks like a button)
         g.setColor(new Color(220, 195, 160));
         g.fillRoundRect(PLAY_BTN_X + 5, PLAY_BTN_Y + 5, PLAY_BTN_W - 10, PLAY_BTN_H - 10, 15, 15);
-        // play text
         g.setColor(new Color(79, 67, 53));
         g.setFont(new Font("Serif", Font.BOLD, 50));
-        g.drawString("PLAY", PLAY_BTN_X + 35, PLAY_BTN_Y + 50);
-        */
+        g.drawString("PLAY", PLAY_BTN_X + 45, PLAY_BTN_Y + 50);
     }
 
-    // ------------------------------ DRAW GAME PAGE ------------------------------
-
-    public static void drarwGamePage(Graphics g) {
-        g.setColor(new Color(195, 170, 137)); //page color
+    // -----------------------------------------------------------
+    // GAME PAGE
+    // -----------------------------------------------------------
+    private void drawGamePage(Graphics g) {
+        g.setColor(new Color(195, 170, 137));
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        //title
+        g.setColor(new Color(79, 67, 53));
+        g.setFont(new Font("Serif", Font.BOLD, 40));
+        g.drawString("Chinese Checkers", 270, 45);
 
-        // score panel 
-        drawScorePanel(g)
+        drawScorePanel(g);
+        board.draw(g);
 
-        // board
-        drawBoard(g)
+        // draw marbles on top of board
+        for (Marble m : marbles) {
+            m.draw(g);
+        }
 
-        //draw all marbles
+        // white ring around selected marble
+        if (selectedMarble != null) {
+            g.setColor(Color.WHITE);
+            int r = (int)(selectedMarble.getDiameter() / 2) + 4;
+            g.drawOval(
+                (int)selectedMarble.getX() - r,
+                (int)selectedMarble.getY() - r,
+                r * 2, r * 2
+            );
+        }
+
+        // whose turn label
+        g.setFont(new Font("Serif", Font.BOLD, 22));
+        g.setColor(currentPlayer == 1 ? P1_COLOR : P2_COLOR);
+        g.drawString("Player " + currentPlayer + "'s turn", 40, 320);
     }
 
-    // ------------------------------ DRAW SCORE PANEL ------------------------------
+    // -----------------------------------------------------------
+    // SCORE PANEL
+    // -----------------------------------------------------------
+    private void drawScorePanel(Graphics g) {
+        g.setColor(new Color(79, 67, 53));
+        g.drawRoundRect(20, 80, 200, 200, 15, 15);
 
-    public static void drawScorePanel(Graphics G) {
+        g.setFont(new Font("Serif", Font.BOLD, 22));
+        g.setColor(new Color(79, 67, 53));
+        g.drawString("SCORE:", 75, 115);
 
+        g.setColor(P1_COLOR);
+        g.fillOval(35, 130, 18, 18);
+        g.setColor(new Color(79, 67, 53));
+        g.setFont(new Font("Serif", Font.PLAIN, 20));
+        g.drawString("P1: " + player1Score + " / 10", 60, 145);
+
+        g.setColor(P2_COLOR);
+        g.fillOval(35, 175, 18, 18);
+        g.setColor(new Color(79, 67, 53));
+        g.drawString("P2: " + player2Score + " / 10", 60, 190);
     }
 
-    // ------------------------------ DRAW BOARD ------------------------------
-
-    public static void drawBoard(Graphics G) {
-
-    }
-
-    // ------------------------------ MOUSE CLICKED ------------------------------
+    // -----------------------------------------------------------
+    // MOUSE LISTENER
+    // -----------------------------------------------------------
     @Override
-    public void mouseClicked (MouseEvent e) {
-        int aX = e.getX();
-        int aY = e.getY();
+    public void mouseClicked(MouseEvent e) {
+        int mx = e.getX();
+        int my = e.getY();
 
         if (currentPage.equals("home")) {
-            if (PLAY_BUTTON_X <) {
+            if (mx >= PLAY_BTN_X && mx <= PLAY_BTN_X + PLAY_BTN_W
+                    && my >= PLAY_BTN_Y && my <= PLAY_BTN_Y + PLAY_BTN_H) {
+                currentPage = "game";
+                initGame();
+                repaint();
+            }
+        } else if (currentPage.equals("game")) {
+            handleGameClick(mx, my);
+        }
+    }
 
+    private void handleGameClick(int mx, int my) {
+        Color currentColor = (currentPlayer == 1) ? P1_COLOR : P2_COLOR;
+
+        // check if player clicked on one of their own marbles
+        for (Marble m : marbles) {
+            if (isClickOnMarble(mx, my, m) && m.getColor().equals(currentColor)) {
+                selectedMarble = m;
+                repaint();
+                return;
             }
         }
-        
 
-        if ( playButtonX < e.getX() < (playButtonX + 200) && playButtonY < e.getY() < (playButtonY + 200) ) {
-            //TODO: SWITCH SCREEN TO NEW PAGE
-            repaint();
-        }
-
-        /*
-        if (currentPage.equals("home")) {
-163            // check if click is inside the play button
-164            if (mx >= PLAY_BTN_X && mx <= PLAY_BTN_X + PLAY_BTN_W
-165                    && my >= PLAY_BTN_Y && my <= PLAY_BTN_Y + PLAY_BTN_H) {
-166                currentPage = "game"; // SWITCH TO GAME SCREEN
-167                repaint();
-168            }
-169        } else if (currentPage.equals("game")) {
-170            // TODO: handle marble selection and movement clicks here
-171        }
-        */
+        // TODO: if a marble is selected and player clicks a hole → move it
+        // (next step!)
+        repaint();
     }
 
+    private boolean isClickOnMarble(int mx, int my, Marble m) {
+        double dx = mx - m.getX();
+        double dy = my - m.getY();
+        double radius = m.getDiameter() / 2;
+        return (dx * dx + dy * dy) <= (radius * radius);
+    }
 
-    // ------------------------------ MAIN ------------------------------
-    public static void main (String[] args) {
-        JFrame frame = new JFrame("Chinese Checkers Game!!");
+    @Override public void mousePressed(MouseEvent e) {}
+    @Override public void mouseReleased(MouseEvent e) {}
+    @Override public void mouseEntered(MouseEvent e) {}
+    @Override public void mouseExited(MouseEvent e) {}
+
+    // -----------------------------------------------------------
+    // MAIN
+    // -----------------------------------------------------------
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Chinese Checkers");
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocation(50, 0);
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(new ChineseCheckers());
         frame.setVisible(true);
