@@ -1,8 +1,14 @@
 //CS1 Winter Wonderland Project
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.*;
+import java.awt.event.MouseListener;
+import java.awt.event.*;
+import javax.swing.ImageIcon;
+
 
 import org.w3c.dom.events.MouseEvent;
 
@@ -16,35 +22,37 @@ public class ChineseCheckers extends JPanel implements MouseListener {
     private static int PLAY_BUTTON_X = 400;
     private static int PLAY_BUTTON_Y = 450;
     private static int PLAY_BUTTON_W = 200;
-    private static int PLAY_BUTTON_H = 70;
+    private static int PLAY_BUTTON_H = 100;
 
     private String currentPage = "home";
 
     private BufferedImage image;
     private Graphics g;
+    private Timer timer;
     private ArrayList<Marble> marbles;
-    private JPanel mousepanel;
+    private JLabel statusbar;
 
     public ChineseCheckers() {
-        image =  new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        g = image.getGraphics();
-        
+        //image =  new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        //g = image.getGraphics();
+        //TODO: DELETE 33-34 ?
         marbles = new ArrayList<>();
 
         setFocusable(true);
         addMouseListener(this);
     }
 
+
     // ------------------------------ PAINTS ONTO PANEL - CHOOSES WHICH SCREEN TO DRAW ------------------------------
 
+    @Override
     public void paintComponent (Graphics g) {
-
+        super.paintComponent(g);
         if (currentPage.equals("home")) {
             drawHomePage(g);
         } else if (currentPage.equals("game")) {
             drawGamePage(g);
         }
-
     }
     
     // ------------------------------ DRAW HOME PAGE ------------------------------
@@ -61,90 +69,88 @@ public class ChineseCheckers extends JPanel implements MouseListener {
         g.drawString("Checkers", 260, 400);
 
         // Play button
-        g.fillRect(PLAY_BUTTON_X, PLAY_BUTTON_Y, 200,100);
+        g.fillRect(PLAY_BUTTON_X, PLAY_BUTTON_Y, PLAY_BUTTON_W, PLAY_BUTTON_H);
         g.setColor(new Color(195, 170, 137)); // page color
-        g.fillRect(500 - 90, PLAY_BUTTON_Y + 10, 180, 80);
+        //g.fillRect(500 - 90, PLAY_BUTTON_Y + 10, 180, 80);
+        g.fillRect(PLAY_BUTTON_X + 10, PLAY_BUTTON_Y + 10, PLAY_BUTTON_W - 20, PLAY_BUTTON_H - 20);
 
         g.setColor(new Color(79, 67, 53));//dark brown
         g.setFont(new Font("Serif", Font.BOLD, 60));
         g.drawString("PLAY", WIDTH/2 - 80, 520);
 
-
-        /* 
-        // play button — dark brown border
-        g.setColor(new Color(79, 67, 53));
-        g.fillRoundRect(PLAY_BTN_X, PLAY_BTN_Y, PLAY_BTN_W, PLAY_BTN_H, 20, 20);
-        // inner fill (lighter so it looks like a button)
-        g.setColor(new Color(220, 195, 160));
-        g.fillRoundRect(PLAY_BTN_X + 5, PLAY_BTN_Y + 5, PLAY_BTN_W - 10, PLAY_BTN_H - 10, 15, 15);
-        // play text
-        g.setColor(new Color(79, 67, 53));
-        g.setFont(new Font("Serif", Font.BOLD, 50));
-        g.drawString("PLAY", PLAY_BTN_X + 35, PLAY_BTN_Y + 50);
-        */
     }
 
     // ------------------------------ DRAW GAME PAGE ------------------------------
 
-    public static void drarwGamePage(Graphics g) {
-        g.setColor(new Color(195, 170, 137)); //page color
+    public static void drawGamePage(Graphics g) {
+        g.setColor(new Color(230, 212, 168)); //light page
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        //title
+        // Title
+        g.setColor(new Color(79, 67, 53));//dark brown
+        g.setFont(new Font("Serif", Font.BOLD, 60));
+        g.drawString("Chinese Checkers", 300, 75);
 
         // score panel 
-        drawScorePanel(g)
+        //drawScorePanel(g)
 
         // board
-        drawBoard(g)
+        drawBoard(g);
 
         //draw all marbles
     }
 
     // ------------------------------ DRAW SCORE PANEL ------------------------------
 
-    public static void drawScorePanel(Graphics G) {
+    public static void drawScorePanel(Graphics g) {
 
     }
 
     // ------------------------------ DRAW BOARD ------------------------------
 
-    public static void drawBoard(Graphics G) {
-
+    public static void drawBoard(Graphics g) {
+        //Logo
+        ImageIcon image = new ImageIcon("ChineseCheckersBoard.png");
+        g.drawImage(image.getImage(), 360, 150, 550,550, null);
     }
 
     // ------------------------------ MOUSE CLICKED ------------------------------
+
     @Override
-    public void mouseClicked (MouseEvent e) {
+    public void mouseClicked(java.awt.event.MouseEvent e) {
         int aX = e.getX();
         int aY = e.getY();
 
         if (currentPage.equals("home")) {
-            if (PLAY_BUTTON_X <) {
-
+            if (aX >= PLAY_BUTTON_X && aX <= PLAY_BUTTON_X + PLAY_BUTTON_W
+                    && aY >= PLAY_BUTTON_Y && aY <= PLAY_BUTTON_Y + PLAY_BUTTON_H) {
+                currentPage = "game";
+                repaint();
             }
+        } else if (currentPage.equals("game")) {
+            //TODO: ADD MARBLE MOVING LOGIC
         }
-        
-
-        if ( playButtonX < e.getX() < (playButtonX + 200) && playButtonY < e.getY() < (playButtonY + 200) ) {
-            //TODO: SWITCH SCREEN TO NEW PAGE
-            repaint();
-        }
-
-        /*
-        if (currentPage.equals("home")) {
-163            // check if click is inside the play button
-164            if (mx >= PLAY_BTN_X && mx <= PLAY_BTN_X + PLAY_BTN_W
-165                    && my >= PLAY_BTN_Y && my <= PLAY_BTN_Y + PLAY_BTN_H) {
-166                currentPage = "game"; // SWITCH TO GAME SCREEN
-167                repaint();
-168            }
-169        } else if (currentPage.equals("game")) {
-170            // TODO: handle marble selection and movement clicks here
-171        }
-        */
     }
 
+    @Override
+    public void mousePressed(java.awt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(java.awt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(java.awt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(java.awt.event.MouseEvent e) {
+
+    }
 
     // ------------------------------ MAIN ------------------------------
     public static void main (String[] args) {
