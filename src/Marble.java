@@ -12,7 +12,7 @@ public class Marble {
 
     private double diameter;
     private Color color;
-    private boolean reachedGoal; // has this marble reached the opposite triangle?
+    private boolean reachedGoal; // if the marble reached the opposite triangle
 
     // default constructor
     public Marble() {
@@ -45,7 +45,7 @@ public class Marble {
         g.drawOval((int)(x - radius), (int)(y - radius), (int)diameter, (int)diameter);
     }
 
-    // move marble to a new grid position and update pixel coords
+    // move marble to a new grid position and update pixel coordinates
     public void moveTo(int newRow, int newCol, double newX, double newY) {
         this.row = newRow;
         this.col = newCol;

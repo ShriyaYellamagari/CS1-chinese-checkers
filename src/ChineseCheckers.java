@@ -10,8 +10,6 @@ import java.awt.event.*;
 import javax.swing.ImageIcon;
 
 
-import org.w3c.dom.events.MouseEvent;
-
 public class ChineseCheckers extends JPanel implements MouseListener {
 
     //frame sizes
@@ -109,9 +107,9 @@ public class ChineseCheckers extends JPanel implements MouseListener {
     // ------------------------------ DRAW BOARD ------------------------------
 
     public static void drawBoard(Graphics g) {
-        //Logo
         ImageIcon image = new ImageIcon("ChineseCheckersBoard.png");
         g.drawImage(image.getImage(), 360, 150, 550,550, null);
+
     }
 
     // ------------------------------ MOUSE CLICKED ------------------------------
@@ -129,6 +127,7 @@ public class ChineseCheckers extends JPanel implements MouseListener {
             }
         } else if (currentPage.equals("game")) {
             //TODO: ADD MARBLE MOVING LOGIC
+            System.out.println(aX + " " + aY);
         }
     }
 
