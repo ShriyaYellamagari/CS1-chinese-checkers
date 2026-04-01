@@ -1,4 +1,3 @@
-//CS1 Winter Wonderland Project
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +22,9 @@ public class ChineseCheckers extends JPanel implements MouseListener {
     private static int PLAY_BUTTON_H = 100;
 
     private String currentPage = "home";
+    private static int turn = 1;
+    private static int player1Score = 0;
+    private static int player2Score = 0;
 
     private BufferedImage image;
     private Graphics g;
@@ -31,8 +33,8 @@ public class ChineseCheckers extends JPanel implements MouseListener {
     private JLabel statusbar;
 
     public ChineseCheckers() {
-        //image =  new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        //g = image.getGraphics();
+        image =  new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        g = image.getGraphics();
         //TODO: DELETE 33-34 ?
         marbles = new ArrayList<>();
 
@@ -40,23 +42,22 @@ public class ChineseCheckers extends JPanel implements MouseListener {
         addMouseListener(this);
     }
 
-
-    // ------------------------------ PAINTS ONTO PANEL - CHOOSES WHICH SCREEN TO DRAW ------------------------------
-
+    // ------------------------------ CHOOSES WHICH SCENE TO DRAW ------------------------------
     @Override
     public void paintComponent (Graphics g) {
-        super.paintComponent(g);
+        //super.paintComponent(g);
         if (currentPage.equals("home")) {
             drawHomePage(g);
         } else if (currentPage.equals("game")) {
             drawGamePage(g);
         }
     }
-    
-    // ------------------------------ DRAW HOME PAGE ------------------------------
+
+    // ------------------------------  HOME PAGE ------------------------------
 
     public static void drawHomePage(Graphics g) {
-        
+
+        // Background
         g.setColor(new Color(195, 170, 137)); //page color
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -78,7 +79,7 @@ public class ChineseCheckers extends JPanel implements MouseListener {
 
     }
 
-    // ------------------------------ DRAW GAME PAGE ------------------------------
+    // ------------------------------ GAME PAGE ------------------------------
 
     public static void drawGamePage(Graphics g) {
         g.setColor(new Color(230, 212, 168)); //light page
@@ -89,8 +90,8 @@ public class ChineseCheckers extends JPanel implements MouseListener {
         g.setFont(new Font("Serif", Font.BOLD, 60));
         g.drawString("Chinese Checkers", 300, 75);
 
-        // score panel 
-        //drawScorePanel(g)
+
+        drawScorePanel(g);
 
         // board
         drawBoard(g);
@@ -102,14 +103,35 @@ public class ChineseCheckers extends JPanel implements MouseListener {
 
     public static void drawScorePanel(Graphics g) {
 
+        ImageIcon image = new ImageIcon("DarkStar.png");
+
+        // border
+        g.setColor(new Color(79, 67, 53));//dark brown
+        g.fillRect(40, 180, 240, 180);
+        g.setColor(new Color(230, 212, 168));
+        g.fillRect(40 + 5, 180 + 5, 240 - 10, 180 - 10);
+
+
+        // players and score
+        g.setColor(new Color(79, 67, 53));
+        g.setFont(new Font("Serif", Font.BOLD, 20));
+        g.drawString("Player 1: " + player1Score, 70, 230);
+        g.drawString("Player 2: " + player2Score, 70, 280);
+
+        // turn indicator
+        if (turn == 1) {
+            g.drawImage(image.getImage(), 190, 205, 30,30, null);
+        } else if (turn == 2) {
+            g.drawImage(image.getImage(), 190, 255, 30,30, null);
+        }
     }
 
     // ------------------------------ DRAW BOARD ------------------------------
-
     public static void drawBoard(Graphics g) {
-        ImageIcon image = new ImageIcon("ChineseCheckersBoard.png");
-        g.drawImage(image.getImage(), 360, 150, 550,550, null);
+        ImageIcon image = new ImageIcon("ChineseCheckersBoard3.png");
+        g.drawImage(image.getImage(), 330, 135, 590,590, null);
 
+        //Board board = new Board();
     }
 
     // ------------------------------ MOUSE CLICKED ------------------------------
@@ -128,35 +150,29 @@ public class ChineseCheckers extends JPanel implements MouseListener {
         } else if (currentPage.equals("game")) {
             //TODO: ADD MARBLE MOVING LOGIC
             System.out.println(aX + " " + aY);
+
+            //TODO: MAKE SCORE BOARD CHANGE BASED ON MARBLE/GAME LOGIC
         }
     }
 
-    @Override
-    public void mousePressed(java.awt.event.MouseEvent e) {
-
-    }
 
     @Override
-    public void mouseReleased(java.awt.event.MouseEvent e) {
-
-    }
+    public void mousePressed(java.awt.event.MouseEvent e) {    }
 
     @Override
-    public void mouseEntered(java.awt.event.MouseEvent e) {
-
-    }
+    public void mouseReleased(java.awt.event.MouseEvent e) {    }
 
     @Override
-    public void mouseExited(java.awt.event.MouseEvent e) {
+    public void mouseEntered(java.awt.event.MouseEvent e) {    }
 
-    }
+    @Override
+    public void mouseExited(java.awt.event.MouseEvent e) {    }
 
     // ------------------------------ MAIN ------------------------------
     public static void main (String[] args) {
-        JFrame frame = new JFrame("Chinese Checkers Game!!");
+        JFrame frame = new JFrame("Chinese Checkers Game!");
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocation(50, 0);
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(new ChineseCheckers());
         frame.setVisible(true);
