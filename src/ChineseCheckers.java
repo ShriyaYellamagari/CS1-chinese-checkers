@@ -138,12 +138,12 @@ public class ChineseCheckers extends JPanel implements MouseListener {
         
         // End turn button
         g.setColor(new Color(79, 67, 53));
-        g.fillRoundRect(40, 380, 150, 50, 10, 10);
+        g.fillRoundRect(85, 340, 130, 50, 10, 10);
         g.setColor(new Color(230, 212, 168));
-        g.fillRoundRect(45, 385, 140, 40, 10, 10);
+        g.fillRoundRect(90, 345, 120, 40, 10, 10);
         g.setColor(new Color(79, 67, 53));
         g.setFont(new Font("Serif", Font.BOLD, 20));
-        g.drawString("End Turn", 70, 412);
+        g.drawString("End Turn", 110, 372);
 
         // Score Panel
         drawScorePanel(g);
@@ -362,8 +362,9 @@ public class ChineseCheckers extends JPanel implements MouseListener {
                 repaint();
             }
 
+            
             // End turn button after hopping
-            if (aX > 40 && aX < 190 && aY > 380 && aY < 430 && hasHopped) {
+            if (aX > 90 && aX < 210 && aY > 345 && aY < 385 && hasHopped) {
                 selectedMarble = null;
                 hasHopped = false; 
                 if (turn==1) {turn = 2;} else {turn=1;}
