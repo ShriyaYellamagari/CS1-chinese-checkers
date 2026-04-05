@@ -137,14 +137,13 @@ public class ChineseCheckers extends JPanel implements MouseListener {
         g.drawImage(redoImage.getImage(), 955, 10, 30, 30, null);
         
         // End turn button
-        
         g.setColor(new Color(79, 67, 53));
-        g.fillRoundRect(40, 400, 150, 50, 10, 10);
+        g.fillRoundRect(40, 380, 150, 50, 10, 10);
         g.setColor(new Color(230, 212, 168));
-        g.fillRoundRect(45, 405, 140, 40, 10, 10);
+        g.fillRoundRect(45, 385, 140, 40, 10, 10);
         g.setColor(new Color(79, 67, 53));
         g.setFont(new Font("Serif", Font.BOLD, 20));
-        g.drawString("End Turn", 70, 432);
+        g.drawString("End Turn", 70, 412);
 
         // Score Panel
         drawScorePanel(g);
@@ -192,10 +191,9 @@ public class ChineseCheckers extends JPanel implements MouseListener {
 
         // border
         g.setColor(new Color(79, 67, 53));//dark brown
-        g.fillRect(40, 180, 240, 180);
+        g.fillRoundRect(40, 190, 220, 120, 10, 10);
         g.setColor(new Color(230, 212, 168));
-        g.fillRect(40 + 5, 180 + 5, 240 - 10, 180 - 10);
-
+        g.fillRoundRect(40 + 5, 190 + 5, 220 - 10, 120 - 10, 10, 10);
 
         // players and score
         g.setColor(new Color(79, 67, 53));
@@ -365,7 +363,7 @@ public class ChineseCheckers extends JPanel implements MouseListener {
             }
 
             // End turn button after hopping
-            if (aX > 40 && aX < 190 && aY > 400 && aY < 450 && hasHopped) {
+            if (aX > 40 && aX < 190 && aY > 380 && aY < 430 && hasHopped) {
                 selectedMarble = null;
                 hasHopped = false; 
                 if (turn==1) {turn = 2;} else {turn=1;}
